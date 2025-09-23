@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { agent } from './agent.js';
-import { addYTVideoToVectorStore } from './embeddings.js';
+import { agent } from './agent_final.js';
+// import { addYTVideoToVectorStore } from './embeddings_final.js';
 
 const port = process.env.PORT || 3000;
 
@@ -41,13 +41,14 @@ app.post('/generate', async (req, res) => {
   res.send(results.messages.at(-1)?.content);
 });
 
-app.post('/webhook', async (req, res) => {
-  await Promise.all(
-    req.body.map(async (video) => addYTVideoToVectorStore(video))
-  );
+//disabled because tool to scrape YT video is disabled
+// app.post('/webhook', async (req, res) => {
+//   await Promise.all(
+//     req.body.map(async (video) => addYTVideoToVectorStore(video))
+//   );
 
-  res.send('OK');
-});
+//   res.send('OK');
+// });
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
