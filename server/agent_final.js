@@ -40,15 +40,15 @@ await addYTVideoToVectorStore(data[0]);
 
 // retrieval tool
 const retrieveTool = tool(
-  async ({ query, video_id }, { configurable: {} }) => {
+  async ({ query, videoId }, { configurable: {} }) => {
     const retrievedDocs = await vectorStore.similaritySearch(query, 3, {
-      video_id,
+      videoId,
     });
 
     const serializedDocs = retrievedDocs
       .map((doc) => doc.pageContent)
       .join('\n ');
-
+    console.log("here");
     return serializedDocs;
   },
   {
@@ -57,7 +57,7 @@ const retrieveTool = tool(
       'Retrieve the most relevant chunks of text from the transcript for a specific youtube video',
     schema: z.object({
       query: z.string(),
-      video_id: z.string().describe('The id of the video to retrieve'),
+      videoId: z.string().describe('The id of the video to retrieve'),
     }),
   }
 );
@@ -66,8 +66,8 @@ const retrieveTool = tool(
 const retrieveSimilarVideosTool = tool(
   async ({ query }) => {
     const retrievedDocs = await vectorStore.similaritySearch(query, 30);
-
-    const ids = retrievedDocs.map((doc) => doc.metadata.video_id).join('\n ');
+    console.log("here2")
+    const ids = retrievedDocs.map((doc) => doc.metadata.videoId).join('\n ');
 
     return ids;
   },
@@ -89,9 +89,9 @@ const MISTRAL_API_KEY = process.env.MISTRAL_API_KEY || FALLBACK_MISTRAL_KEY;
 
 const llm = new ChatMistralAI({
     modelName: 'mistral-small',
-    temperature: 0.7,
+    temperature: 0.1, // Lower temperature for more consistent tool usage
     apiKey: MISTRAL_API_KEY
-})
+});
 
 const checkpointer = new MemorySaver();
 
